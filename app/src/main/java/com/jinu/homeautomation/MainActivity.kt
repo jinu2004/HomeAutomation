@@ -28,11 +28,14 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.jinu.homeautomation.bluetooth.BluetoothControl
+import com.jinu.homeautomation.bluetooth.BluetoothViewModel
+import com.jinu.homeautomation.bluetooth.BluetoothViewModelFactory
 import com.jinu.homeautomation.navigation.Navigate
 import com.jinu.homeautomation.navigation.Screens
 import com.jinu.homeautomation.ui.theme.HomeAutomationTheme
@@ -58,6 +61,10 @@ class MainActivity : ComponentActivity() {
             )
             val blutoothController = BluetoothControl(LocalContext.current)
             val currentBluetoothAdapter = getSystemService(BluetoothManager::class.java).adapter
+
+            val bleViewModel: BluetoothViewModel =
+                viewModel(factory = BluetoothViewModelFactory(LocalContext.current))
+
 
 
 
@@ -105,19 +112,41 @@ class MainActivity : ComponentActivity() {
 
 
 
-                Scaffold(topBar = {}, floatingActionButton = {
-                    FloatingActionButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "",
-                            modifier = Modifier.padding(20.dp)
-                        )
-                    }
-                }, floatingActionButtonPosition = FabPosition.Center
+
+                Scaffold(
+                    floatingActionButton = {
+
+                        when (navController.currentDestination?.route) {
+                            Screens.HomeScreen.route -> {
+                                FloatingActionButton(onClick = { /*TODO*/ }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Add,
+                                        contentDescription = "",
+                                        modifier = Modifier.padding(20.dp)
+                                    )
+                                }
+                            }
+
+                            Screens.DeviceListScreen.route -> {
+                                FloatingActionButton(onClick = { /*TODO*/ }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Add,
+                                        contentDescription = "",
+                                        modifier = Modifier.padding(20.dp)
+                                    )
+                                }
+                            }
+
+                            else -> {}
+
+                        }
+
+
+                    }, floatingActionButtonPosition = FabPosition.Center
                 ) {
                     Navigate(
                         navController = navController,
-                        bluetoothControl = blutoothController,
+                        bluetoothViewModel = bleViewModel,
                         modifier = Modifier.padding(it.calculateTopPadding())
                     )
                     if (!currentBluetoothAdapter.isEnabled && navController.currentDestination?.route == Screens.BlueToothList.route) {
@@ -135,6 +164,7 @@ class MainActivity : ComponentActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        currentBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         @Suppress("DEPRECATION") super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
             if (resultCode == Activity.RESULT_OK) {

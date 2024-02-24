@@ -224,7 +224,7 @@ class BluetoothControl(private val context: Context) : BluetoothController {
     }
 
 
-    private fun updatePairedDevices() {
+     fun updatePairedDevices() {
         if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) {
             return
         }
