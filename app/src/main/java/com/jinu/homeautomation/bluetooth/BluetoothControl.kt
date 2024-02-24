@@ -2,6 +2,7 @@ package com.jinu.homeautomation.bluetooth
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
@@ -14,6 +15,12 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat.registerReceiver
+import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.core.content.ContextCompat
+import com.jinu.homeautomation.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -93,18 +100,21 @@ class BluetoothControl(private val context: Context) : BluetoothController {
 
 
     override fun scanDevices() {
-        if (!hasPermission(Manifest.permission.BLUETOOTH_SCAN)) {
-            return
+        if (hasPermission(Manifest.permission.BLUETOOTH_SCAN) && bluetoothAdapter?.isEnabled == true) {
+
+            context.registerReceiver(
+                foundDeviceReceiver,
+                IntentFilter(BluetoothDevice.ACTION_FOUND)
+            )
+
+            updatePairedDevices()
+
+            bluetoothAdapter?.startDiscovery()
+        }
+        else{
+            Toast.makeText(context, "Bluetooth permission is missing", Toast.LENGTH_SHORT).show()
         }
 
-        context.registerReceiver(
-            foundDeviceReceiver,
-            IntentFilter(BluetoothDevice.ACTION_FOUND)
-        )
-
-        updatePairedDevices()
-
-        bluetoothAdapter?.startDiscovery()
     }
 
     override fun stopScan() {
@@ -121,6 +131,9 @@ class BluetoothControl(private val context: Context) : BluetoothController {
                     ?.createRfcommSocketToServiceRecord(
                         UUID.fromString(SERVICE_UUID)
                     )
+            }
+            else{
+                Toast.makeText(context, "Bluetooth permission is missing", Toast.LENGTH_SHORT).show()
             }
             bluetoothAdapter?.cancelDiscovery()
 
@@ -223,7 +236,7 @@ class BluetoothControl(private val context: Context) : BluetoothController {
             }
     }
 
-    private fun hasPermission(permission: String): Boolean {
+    fun hasPermission(permission: String): Boolean {
         return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
     }
 
