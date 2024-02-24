@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                     Manifest.permission.BLUETOOTH_ADMIN
                 )
             )
-            val blutoothController = BluetoothControl(LocalContext.current)
+            val blutoothController = BluetoothControl(this)
             val currentBluetoothAdapter = getSystemService(BluetoothManager::class.java).adapter
 
             val bleViewModel: BluetoothViewModel =

@@ -1,6 +1,7 @@
 package com.jinu.homeautomation.screens
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothAdapter
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -30,9 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jinu.homeautomation.R
 import com.jinu.homeautomation.bluetooth.BluetoothViewModel
+import com.jinu.homeautomation.navigation.Screens
 
 class BluetoothList(
-    navController: NavController,
+    private val navController: NavController,
     private val bluetoothControl: BluetoothViewModel
 ) {
 
@@ -40,6 +44,10 @@ class BluetoothList(
     @SuppressLint("MissingPermission", "StateFlowValueCalledInComposition")
     @Composable
     fun View(modifier: Modifier) {
+        val lifecycleOwner = LocalLifecycleOwner.current
+        val bluetoothAdapter = LocalContext.current.getSystemService(BluetoothAdapter::class.java)
+
+
 
 
         Column(
@@ -80,11 +88,11 @@ class BluetoothList(
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                bluetoothControl.pairedDevices.observeForever {
+                bluetoothControl.pairedDevices.observe(lifecycleOwner) { it ->
                     items(it) {
                         it.name?.let { it1 ->
                             OutlinedButton(
-                                onClick = { /*TODO*/ }, modifier = Modifier
+                                onClick = { if(bluetoothControl.connectToDevice(it))navController.navigate(Screens.DeviceProvision.route) }, modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(start = 30.dp, end = 30.dp)
                             ) {
@@ -112,7 +120,7 @@ class BluetoothList(
                 }
 
                 item {
-                    Button(onClick = {bluetoothControl.getAllPairedDevice()}) {
+                    Button(onClick = {}) {
                         Text(text = "Refresh")
 
                     }

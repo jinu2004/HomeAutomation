@@ -29,6 +29,7 @@ fun Navigate(navController: NavHostController,bluetoothViewModel: BluetoothViewM
         }
     }
 }
+//+ "/{room}/{mac}"
 
 sealed class Screens(val route: String) {
     object HomeScreen : Screens("home_screen")
