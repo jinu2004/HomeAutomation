@@ -1,10 +1,11 @@
+@file:Suppress("DEPRECATION")
+
 package com.jinu.homeautomation
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -23,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -33,9 +33,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.jinu.homeautomation.bluetooth.BluetoothControl
-import com.jinu.homeautomation.bluetooth.BluetoothViewModel
-import com.jinu.homeautomation.bluetooth.BluetoothViewModelFactory
+import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
+import com.jinu.homeautomation.bluetooth_controller.BluetoothViewModelFactory
 import com.jinu.homeautomation.navigation.Navigate
 import com.jinu.homeautomation.navigation.Screens
 import com.jinu.homeautomation.ui.theme.HomeAutomationTheme
@@ -59,11 +58,10 @@ class MainActivity : ComponentActivity() {
                     Manifest.permission.BLUETOOTH_ADMIN
                 )
             )
-            val blutoothController = BluetoothControl(this)
-            val currentBluetoothAdapter = getSystemService(BluetoothManager::class.java).adapter
+            val currentBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
 
-            val bleViewModel: BluetoothViewModel =
-                viewModel(factory = BluetoothViewModelFactory(LocalContext.current))
+            val bleViewModel: BluetoothControllerViewModel =
+                viewModel(factory = BluetoothViewModelFactory(currentBluetoothAdapter))
 
 
 

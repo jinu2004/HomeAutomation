@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NetworkWifi
 import androidx.compose.material.icons.filled.WifiLock
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,16 +35,17 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jinu.homeautomation.R
-import com.jinu.homeautomation.bluetooth.BluetoothViewModel
+import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
 
 class DeviceProvisionScreen(
     private val navController: NavController,
-    private val bluetoothControl: BluetoothViewModel
+    private val bluetoothControl: BluetoothControllerViewModel
 ) {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun View(modifier: Modifier) {
+
         var ssd by remember {
             mutableStateOf("")
         }
@@ -80,7 +82,11 @@ class DeviceProvisionScreen(
                 modifier = Modifier.padding(top = 20.dp)
             )
 
-            Image(painter = painterResource(id = R.drawable.smart_home_amico), contentDescription = "", modifier = Modifier.size(250.dp))
+            Image(
+                painter = painterResource(id = R.drawable.smart_home_amico),
+                contentDescription = "",
+                modifier = Modifier.size(250.dp)
+            )
 
             OutlinedTextField(
                 value = ssd,
@@ -134,7 +140,9 @@ class DeviceProvisionScreen(
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation()
             )
-
+            Button(onClick = { bluetoothControl.sendMessage("hay") }) {
+                Text(text = "message")
+            }
 
 
         }

@@ -5,15 +5,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.jinu.homeautomation.bluetooth.BluetoothControl
-import com.jinu.homeautomation.bluetooth.BluetoothViewModel
+import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
 import com.jinu.homeautomation.screens.BluetoothList
 import com.jinu.homeautomation.screens.DeviceListScreen
 import com.jinu.homeautomation.screens.DeviceProvisionScreen
 import com.jinu.homeautomation.screens.HomeScreen
 
 @Composable
-fun Navigate(navController: NavHostController,bluetoothViewModel: BluetoothViewModel,modifier: Modifier) {
+fun Navigate(navController: NavHostController,bluetoothViewModel: BluetoothControllerViewModel,modifier: Modifier) {
     NavHost(navController = navController, startDestination = Screens.BlueToothList.route) {
         composable(route = Screens.HomeScreen.route) {
             HomeScreen(navController).View(modifier)

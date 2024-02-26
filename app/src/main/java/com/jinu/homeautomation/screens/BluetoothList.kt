@@ -2,6 +2,7 @@ package com.jinu.homeautomation.screens
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,12 +33,11 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jinu.homeautomation.R
-import com.jinu.homeautomation.bluetooth.BluetoothViewModel
-import com.jinu.homeautomation.navigation.Screens
+import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
 
 class BluetoothList(
     private val navController: NavController,
-    private val bluetoothControl: BluetoothViewModel
+    private val bluetoothControl: BluetoothControllerViewModel
 ) {
 
 
@@ -45,10 +45,7 @@ class BluetoothList(
     @Composable
     fun View(modifier: Modifier) {
         val lifecycleOwner = LocalLifecycleOwner.current
-        val bluetoothAdapter = LocalContext.current.getSystemService(BluetoothAdapter::class.java)
-
-
-
+        val context = LocalContext.current.applicationContext
 
         Column(
             modifier = modifier.fillMaxSize(),
@@ -88,11 +85,19 @@ class BluetoothList(
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                bluetoothControl.pairedDevices.observe(lifecycleOwner) { it ->
+                bluetoothControl.getPairedDevices().observe(lifecycleOwner) { it ->
                     items(it) {
                         it.name?.let { it1 ->
                             OutlinedButton(
-                                onClick = { if(bluetoothControl.connectToDevice(it))navController.navigate(Screens.DeviceProvision.route) }, modifier = Modifier
+                                onClick = {
+                                    if (bluetoothControl.connectRemoteDevice(it)) {
+                                        bluetoothControl.sendMessage("hallo")
+                                    } else Toast.makeText(
+                                        context,
+                                        "Unable To Connect Try Again",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }, modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(start = 30.dp, end = 30.dp)
                             ) {
