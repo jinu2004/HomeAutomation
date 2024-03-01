@@ -1,12 +1,15 @@
 package com.jinu.homeautomation.bluetooth_controller
 
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class BluetoothControllerViewModel(private var adapter: BluetoothAdapter) : ViewModel() {
+class BluetoothControllerViewModel(adapter: BluetoothAdapter) : ViewModel() {
 
     private var bluetoothController = BluetoothController(adapter)
     private var isSucess: Boolean = false
@@ -15,10 +18,12 @@ class BluetoothControllerViewModel(private var adapter: BluetoothAdapter) : View
     }
 
     fun connectRemoteDevice(devices: BluetoothDevices): Boolean {
-        viewModelScope.launch {
-            isSucess = bluetoothController.connectRemoteDevice(devices)
+        viewModelScope.launch(Dispatchers.IO) {
+            val async = async { return@async bluetoothController.connectRemoteDevice(devices) }
+            isSucess = async.await()
         }
         return isSucess
+
     }
 
     fun sendMessage(message: String) {

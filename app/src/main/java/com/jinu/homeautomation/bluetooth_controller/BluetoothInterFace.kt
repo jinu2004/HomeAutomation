@@ -7,6 +7,7 @@ interface BluetoothInterFace {
 
     suspend fun connectRemoteDevice(devices: BluetoothDevices): Boolean
 
+
     fun sendMessage(message: String)
 
     fun disconnect()

@@ -34,18 +34,26 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jinu.homeautomation.R
 import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
+import com.jinu.homeautomation.bluetooth_controller.BluetoothDevices
 
 class BluetoothList(
     private val navController: NavController,
     private val bluetoothControl: BluetoothControllerViewModel
 ) {
-
+    private val listOfDevice = arrayListOf<BluetoothDevices>()
 
     @SuppressLint("MissingPermission", "StateFlowValueCalledInComposition")
     @Composable
     fun View(modifier: Modifier) {
         val lifecycleOwner = LocalLifecycleOwner.current
         val context = LocalContext.current.applicationContext
+
+        bluetoothControl.getPairedDevices().observe(lifecycleOwner){
+            listOfDevice.addAll(it)
+        }
+
+
+
 
         Column(
             modifier = modifier.fillMaxSize(),
@@ -85,13 +93,13 @@ class BluetoothList(
                 verticalArrangement = Arrangement.SpaceAround,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                bluetoothControl.getPairedDevices().observe(lifecycleOwner) { it ->
-                    items(it) {
+                    items(listOfDevice) {
                         it.name?.let { it1 ->
                             OutlinedButton(
                                 onClick = {
                                     if (bluetoothControl.connectRemoteDevice(it)) {
                                         bluetoothControl.sendMessage("hallo")
+                                        bluetoothControl.disconnect()
                                     } else Toast.makeText(
                                         context,
                                         "Unable To Connect Try Again",
@@ -122,10 +130,13 @@ class BluetoothList(
                             }
                         }
                     }
-                }
+
 
                 item {
-                    Button(onClick = {}) {
+                    Button(onClick = {        bluetoothControl.getPairedDevices().observe(lifecycleOwner){
+                        listOfDevice.clear()
+                        listOfDevice.addAll(it)
+                    }}) {
                         Text(text = "Refresh")
 
                     }
