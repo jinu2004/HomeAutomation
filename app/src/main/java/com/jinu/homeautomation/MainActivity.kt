@@ -40,7 +40,6 @@ import com.jinu.homeautomation.navigation.Screens
 import com.jinu.homeautomation.ui.theme.HomeAutomationTheme
 
 class MainActivity : ComponentActivity() {
-    private val REQUEST_ENABLE_BLUETOOTH = 0
     private lateinit var currentBluetoothAdapter: BluetoothAdapter
     private lateinit var navController: NavHostController
 
@@ -151,7 +150,7 @@ class MainActivity : ComponentActivity() {
                         val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
                         @Suppress("DEPRECATION") startActivityForResult(
                             enableBluetoothIntent,
-                            REQUEST_ENABLE_BLUETOOTH
+                            0
                         )
                     }
 
@@ -164,7 +163,7 @@ class MainActivity : ComponentActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         currentBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
         @Suppress("DEPRECATION") super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_ENABLE_BLUETOOTH) {
+        if (requestCode == 0) {
             if (resultCode == Activity.RESULT_OK) {
                 if (currentBluetoothAdapter.isEnabled) {
                     Toast.makeText(baseContext, "Bluetooth has been enabled", Toast.LENGTH_SHORT)
