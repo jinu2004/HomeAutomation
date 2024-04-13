@@ -1,7 +1,6 @@
 package com.jinu.homeautomation.screens
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -51,6 +50,7 @@ class BluetoothList(
         bluetoothControl.getPairedDevices().observe(lifecycleOwner){
             listOfDevice.addAll(it)
         }
+
 
 
 
@@ -133,7 +133,8 @@ class BluetoothList(
 
 
                 item {
-                    Button(onClick = {        bluetoothControl.getPairedDevices().observe(lifecycleOwner){
+                    Button(onClick = {
+                        bluetoothControl.getPairedDevices().observe(lifecycleOwner){
                         listOfDevice.clear()
                         listOfDevice.addAll(it)
                     }}) {
