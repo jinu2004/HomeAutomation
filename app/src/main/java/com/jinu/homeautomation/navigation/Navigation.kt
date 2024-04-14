@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
 import com.jinu.homeautomation.screens.BluetoothList
+import com.jinu.homeautomation.screens.BulbController
 import com.jinu.homeautomation.screens.DeviceListScreen
 import com.jinu.homeautomation.screens.DeviceProvisionScreen
 import com.jinu.homeautomation.screens.HomeScreen
@@ -19,7 +20,7 @@ fun Navigate(
     bluetoothViewModel: BluetoothControllerViewModel,
     modifier: Modifier
 ) {
-    NavHost(navController = navController, startDestination = Screens.LogIn.route) {
+    NavHost(navController = navController, startDestination = Screens.BulbController.route) {
         composable(route = Screens.HomeScreen.route) {
             HomeScreen(navController).View(modifier)
         }
@@ -37,6 +38,9 @@ fun Navigate(
         }
         composable(route = Screens.LogIn.route){
             SignUp().View()
+        }
+        composable(route= Screens.BulbController.route){
+            BulbController().View()
         }
     }
 }

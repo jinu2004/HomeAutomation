@@ -73,6 +73,9 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.5.1")
     //noinspection GradleDependency
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("com.github.skydoves:colorpicker-compose:1.0.7")
+    implementation ("io.github.ningyuv:circular-seek-bar:0.0.3")
+    implementation("com.airbnb.android:lottie-compose:6.4.0")
 
 //    implementation("com.google.matter:matter-android-demo-sdk:1.0")
 
