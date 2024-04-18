@@ -1,6 +1,5 @@
 package com.jinu.homeautomation.screens
 
-import android.animation.ArgbEvaluator
 import android.content.res.Resources
 import android.view.MotionEvent
 import androidx.compose.foundation.Canvas
@@ -68,6 +67,7 @@ import kotlin.math.sin
 class BulbController {
     private companion object {
         const val WARMSCREEN = "warm"
+        const val COLORSCREEN = "color_screen"
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -124,7 +124,7 @@ class BulbController {
                 }
             }
 
-            NavHost(navController = navController, startDestination = WARMSCREEN) {
+            NavHost(navController = navController, startDestination = COLORSCREEN) {
                 composable(route = WARMSCREEN) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -137,12 +137,12 @@ class BulbController {
                         ) {
                             CircularSeekbarView(
                                 value = warmness,
-                                modifier = Modifier.fillMaxSize(),
                                 onChange = { warmness = it },
+                                modifier = Modifier.fillMaxSize(),
+                                startAngle = 135f,
+                                fullAngle = 270f,
                                 lineWeight = 50.dp,
                                 lineRoundEnd = true,
-                                fullAngle = 270f,
-                                startAngle = 135f,
                                 drawInCircle = {
                                     drawCircle(color = interpolateColors(ambientColors[0],ambientColors[1],warmness), radius = brightness + 100)
                                 }
@@ -174,6 +174,9 @@ class BulbController {
 
 
                 }
+                composable(route= COLORSCREEN){
+                    
+                }
             }
 
 
@@ -190,8 +193,6 @@ class BulbController {
         steps: Int = 0,
         startAngle: Float = 180f,
         fullAngle: Float = 360f,
-        activeColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
-        inactiveColor: Color = MaterialTheme.colorScheme.primaryContainer,
         dotColor: Color = MaterialTheme.colorScheme.primary,
         lineWeight: Dp = 20.dp,
         lineRoundEnd: Boolean = false,
@@ -204,7 +205,6 @@ class BulbController {
         val lineWeightInPx = dpScale * lineWeight.value
         val dotRadiusInPx = dpScale * dotRadius.value
         val dotTouchThresholdInPx = dpScale * dotTouchThreshold.value
-        val innerStartAngle = startAngle
         val stroke =
             Stroke(lineWeightInPx, cap = if (lineRoundEnd) StrokeCap.Round else StrokeCap.Butt)
         var sweepAngle = value * fullAngle
@@ -249,7 +249,7 @@ class BulbController {
                         val v = pointerOffset.minus(center)
                         if (v.getDistance() == 0f) return@pointerInteropFilter true
                         var nextSweepAngle =
-                            (atan(v.y / v.x) / PI * 180 - innerStartAngle).toFloat()
+                            (atan(v.y / v.x) / PI * 180 - startAngle).toFloat()
                         if (v.x < 0) {
                             nextSweepAngle += 180
                         }
@@ -302,7 +302,7 @@ class BulbController {
 
             drawArc(
                 brush = brush,
-                startAngle = innerStartAngle,
+                startAngle = startAngle,
                 sweepAngle = sweepAngle,
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
@@ -311,14 +311,14 @@ class BulbController {
             )
             drawArc(
                 brush = brush,
-                startAngle = innerStartAngle + sweepAngle,
+                startAngle = startAngle + sweepAngle,
                 sweepAngle = fullAngle - sweepAngle,
                 useCenter = false,
                 topLeft = Offset(center.x - radius, center.y - radius),
                 size = Size(radius * 2, radius * 2),
                 style = stroke
             )
-            val dotAngle = (innerStartAngle + sweepAngle)
+            val dotAngle = (startAngle + sweepAngle)
             val dotCenter = Offset(
                 center.x + cos((dotAngle / 180f * PI).toFloat()) * radius,
                 center.y + sin((dotAngle / 180f * PI).toFloat()) * radius
@@ -338,7 +338,7 @@ class BulbController {
         }
     }
 
-    fun interpolateColors(startColor: Color, endColor: Color, fraction: Float): Color {
+    private fun interpolateColors(startColor: Color, endColor: Color, fraction: Float): Color {
         val red = (startColor.red + fraction * (endColor.red - startColor.red)).coerceIn(0f, 1f)
         val green = (startColor.green + fraction * (endColor.green - startColor.green)).coerceIn(0f, 1f)
         val blue = (startColor.blue + fraction * (endColor.blue - startColor.blue)).coerceIn(0f, 1f)
