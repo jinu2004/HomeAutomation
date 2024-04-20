@@ -73,7 +73,6 @@ class MainActivity : ComponentActivity() {
 
 
 
-
             HomeAutomationTheme {
                 navController = rememberNavController()
                 val lifecycleOwner = LocalLifecycleOwner.current

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -55,6 +56,8 @@ import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.jinu.homeautomation.R
 import io.github.ningyuv.circularseekbar.fillMinDimension
 import kotlin.math.PI
@@ -84,6 +87,7 @@ class BulbController {
             Color.hsl(56f, 0.87f, 0.84f, 1f),
             Color.hsl(197f, 0.87f, 0.84f)
         )
+        val controller = rememberColorPickerController()
 
         val lottyComposition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.bulb_animation))
         val bulbProgressAnim by animateLottieCompositionAsState(composition = lottyComposition)
@@ -116,15 +120,15 @@ class BulbController {
                 windowInsets = WindowInsets(left = 30.dp, right = 30.dp),
                 containerColor = Color.Transparent
             ) {
-                OutlinedButton(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth(0.5f)) {
+                OutlinedButton(onClick = { navController.navigate(WARMSCREEN) }, modifier = Modifier.fillMaxWidth(0.5f)) {
                     Text(text = "Warmness")
                 }
-                OutlinedButton(onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick = { navController.navigate(COLORSCREEN) }, modifier = Modifier.fillMaxWidth()) {
                     Text(text = "Color")
                 }
             }
 
-            NavHost(navController = navController, startDestination = COLORSCREEN) {
+            NavHost(navController = navController, startDestination = WARMSCREEN) {
                 composable(route = WARMSCREEN) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -164,9 +168,11 @@ class BulbController {
                                 value = brightness,
                                 onValueChange = { brightness = it },
                                 valueRange = 0f..100f,
-                                modifier = Modifier.align(
-                                    Alignment.BottomCenter
-                                ).padding(20.dp)
+                                modifier = Modifier
+                                    .align(
+                                        Alignment.BottomCenter
+                                    )
+                                    .padding(20.dp)
                             )
                         }
 
@@ -175,7 +181,22 @@ class BulbController {
 
                 }
                 composable(route= COLORSCREEN){
-                    
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        HsvColorPicker(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(450.dp)
+                                .padding(50.dp),
+                            controller = controller,
+                            onColorChanged = {
+
+                            }
+                        )
+                    }
                 }
             }
 
