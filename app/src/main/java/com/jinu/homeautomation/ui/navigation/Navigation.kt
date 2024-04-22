@@ -1,4 +1,4 @@
-package com.jinu.homeautomation.navigation
+package com.jinu.homeautomation.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -6,13 +6,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
-import com.jinu.homeautomation.screens.BluetoothList
-import com.jinu.homeautomation.screens.BulbController
-import com.jinu.homeautomation.screens.DeviceListScreen
-import com.jinu.homeautomation.screens.DeviceProvisionScreen
-import com.jinu.homeautomation.screens.HomeScreen
-import com.jinu.homeautomation.screens.SignInScreen
-import com.jinu.homeautomation.screens.SignUp
+import com.jinu.homeautomation.ui.screens.BluetoothList
+import com.jinu.homeautomation.ui.screens.BulbController
+import com.jinu.homeautomation.ui.screens.DeviceListScreen
+import com.jinu.homeautomation.ui.screens.DeviceProvisionScreen
+import com.jinu.homeautomation.ui.screens.FanController
+import com.jinu.homeautomation.ui.screens.HomeScreen
+import com.jinu.homeautomation.ui.screens.SignInScreen
+import com.jinu.homeautomation.ui.screens.SignUp
 
 @Composable
 fun Navigate(
@@ -20,7 +21,7 @@ fun Navigate(
     bluetoothViewModel: BluetoothControllerViewModel,
     modifier: Modifier
 ) {
-    NavHost(navController = navController, startDestination = Screens.BulbController.route) {
+    NavHost(navController = navController, startDestination = Screens.FanController.route) {
         composable(route = Screens.HomeScreen.route) {
             HomeScreen(navController).View(modifier)
         }
@@ -41,6 +42,9 @@ fun Navigate(
         }
         composable(route= Screens.BulbController.route){
             BulbController().View()
+        }
+        composable(route = Screens.FanController.route){
+            FanController().View()
         }
     }
 }

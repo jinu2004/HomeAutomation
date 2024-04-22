@@ -38,8 +38,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
 import com.jinu.homeautomation.bluetooth_controller.BluetoothViewModelFactory
-import com.jinu.homeautomation.navigation.Navigate
-import com.jinu.homeautomation.navigation.Screens
+import com.jinu.homeautomation.ui.navigation.Navigate
+import com.jinu.homeautomation.ui.navigation.Screens
 import com.jinu.homeautomation.ui.theme.HomeAutomationTheme
 
 class MainActivity : ComponentActivity() {

@@ -1,4 +1,4 @@
-package com.jinu.homeautomation.screens
+package com.jinu.homeautomation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

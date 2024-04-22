@@ -1,4 +1,4 @@
-package com.jinu.homeautomation.screens
+package com.jinu.homeautomation.ui.screens
 
 import android.content.res.Resources
 import android.view.MotionEvent

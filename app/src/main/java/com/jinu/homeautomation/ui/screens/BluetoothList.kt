@@ -1,4 +1,4 @@
-package com.jinu.homeautomation.screens
+package com.jinu.homeautomation.ui.screens
 
 import android.annotation.SuppressLint
 import android.widget.Toast
