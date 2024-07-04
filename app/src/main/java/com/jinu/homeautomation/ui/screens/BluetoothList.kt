@@ -34,10 +34,10 @@ import androidx.navigation.NavController
 import com.jinu.homeautomation.R
 import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
 import com.jinu.homeautomation.bluetooth_controller.BluetoothDevices
+import org.koin.androidx.compose.getViewModel
 
 class BluetoothList(
     private val navController: NavController,
-    private val bluetoothControl: BluetoothControllerViewModel
 ) {
     private val listOfDevice = arrayListOf<BluetoothDevices>()
 
@@ -46,6 +46,7 @@ class BluetoothList(
     fun View(modifier: Modifier) {
         val lifecycleOwner = LocalLifecycleOwner.current
         val context = LocalContext.current.applicationContext
+        val bluetoothControl = getViewModel<BluetoothControllerViewModel>()
 
         bluetoothControl.getPairedDevices().observe(lifecycleOwner){
             listOfDevice.addAll(it)

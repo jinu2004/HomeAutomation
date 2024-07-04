@@ -53,9 +53,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.jinu.homeautomation.R
@@ -89,8 +86,6 @@ class BulbController {
         )
         val controller = rememberColorPickerController()
 
-        val lottyComposition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.bulb_animation))
-        val bulbProgressAnim by animateLottieCompositionAsState(composition = lottyComposition)
 
         Column(
             verticalArrangement = Arrangement.Top,

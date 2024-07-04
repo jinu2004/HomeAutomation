@@ -1,9 +1,10 @@
 @file:Suppress("DEPRECATION")
 
-package com.jinu.homeautomation
+package com.jinu.homeautomation.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
@@ -13,42 +14,43 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
-import com.jinu.homeautomation.bluetooth_controller.BluetoothViewModelFactory
+import com.jinu.homeautomation.ktorclient.auth.domain.AuthResult
+import com.jinu.homeautomation.ktorclient.auth.domain.AuthViewModel
 import com.jinu.homeautomation.ui.navigation.Navigate
 import com.jinu.homeautomation.ui.navigation.Screens
 import com.jinu.homeautomation.ui.theme.HomeAutomationTheme
+import org.koin.androidx.compose.getViewModel
+
 
 class MainActivity : ComponentActivity() {
     private lateinit var currentBluetoothAdapter: BluetoothAdapter
     private lateinit var navController: NavHostController
 
+
+    @TargetApi(Build.VERSION_CODES.S)
     @SuppressLint("StateFlowValueCalledInComposition", "MissingPermission")
     @RequiresApi(Build.VERSION_CODES.S)
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+    @OptIn(ExperimentalPermissionsApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -60,21 +62,49 @@ class MainActivity : ComponentActivity() {
                     Manifest.permission.BLUETOOTH_ADMIN
                 )
             )
-            val currentBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-
-            val bleViewModel: BluetoothControllerViewModel =
-                viewModel(factory = BluetoothViewModelFactory(currentBluetoothAdapter))
-
-
-
-
-
 
 
 
 
             HomeAutomationTheme {
                 navController = rememberNavController()
+
+                val auth = getViewModel<AuthViewModel>()
+                val context = LocalContext.current
+
+                currentBluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+
+
+                LaunchedEffect(auth, context) {
+                    auth.authResult.collect { result ->
+                        when (result) {
+                            is AuthResult.Authorized -> {
+                                navController.navigate(Screens.HomeScreen.route)
+                            }
+
+                            is AuthResult.Unauthorized -> {
+                                Toast.makeText(context, "You,re not authorized", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Screens.SignIn.route)
+                            }
+
+                            is AuthResult.UnknownError -> {
+                                Toast.makeText(
+                                    context,
+                                    "An unknown error occurred",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                navController.navigate(Screens.SignIn.route)
+                            }
+                        }
+
+                    }
+
+                }
+
+
+
+
                 val lifecycleOwner = LocalLifecycleOwner.current
                 DisposableEffect(key1 = lifecycleOwner, effect = {
                     val observer = LifecycleEventObserver { _, event ->
@@ -144,12 +174,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Navigate(
                         navController = navController,
-                        bluetoothViewModel = bleViewModel,
                         modifier = Modifier.padding(it.calculateTopPadding())
                     )
                     if (!currentBluetoothAdapter.isEnabled && navController.currentDestination?.route == Screens.BlueToothList.route) {
                         val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                        @Suppress("DEPRECATION") startActivityForResult(
+                        startActivityForResult(
                             enableBluetoothIntent,
                             0
                         )

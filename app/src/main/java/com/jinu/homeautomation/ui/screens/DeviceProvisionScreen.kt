@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NetworkWifi
 import androidx.compose.material.icons.filled.WifiLock
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -36,13 +35,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jinu.homeautomation.R
 import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
+import org.koin.androidx.compose.getViewModel
 
 class DeviceProvisionScreen(
     private val navController: NavController,
-    private val bluetoothControl: BluetoothControllerViewModel
 ) {
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun View(modifier: Modifier) {
 
@@ -52,9 +50,7 @@ class DeviceProvisionScreen(
         var password by remember {
             mutableStateOf("")
         }
-        var roomName by remember {
-            mutableStateOf("")
-        }
+        val bluetoothControl = getViewModel<BluetoothControllerViewModel>()
 
 
         Column(

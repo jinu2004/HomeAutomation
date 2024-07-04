@@ -49,6 +49,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.9.0")
@@ -77,6 +78,21 @@ dependencies {
     implementation ("io.github.ningyuv:circular-seek-bar:0.0.3")
     implementation("com.airbnb.android:lottie-compose:6.4.0")
 
-//    implementation("com.google.matter:matter-android-demo-sdk:1.0")
+    val ktor_version = "2.3.12"
+
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-android:$ktor_version")
+    implementation("io.ktor:ktor-client-resources:$ktor_version")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
+    implementation("io.ktor:ktor-client-auth:$ktor_version")
+    implementation("io.ktor:ktor-client-websockets:$ktor_version")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+    implementation(platform("io.insert-koin:koin-bom:3.5.0"))
+    implementation("io.insert-koin:koin-core")
+    implementation ("io.insert-koin:koin-androidx-compose:3.5.0")
+    implementation ("io.insert-koin:koin-android:3.5.0")
+
 
 }

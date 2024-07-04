@@ -5,7 +5,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.jinu.homeautomation.bluetooth_controller.BluetoothControllerViewModel
 import com.jinu.homeautomation.ui.screens.BluetoothList
 import com.jinu.homeautomation.ui.screens.BulbController
 import com.jinu.homeautomation.ui.screens.DeviceListScreen
@@ -18,10 +17,9 @@ import com.jinu.homeautomation.ui.screens.SignUp
 @Composable
 fun Navigate(
     navController: NavHostController,
-    bluetoothViewModel: BluetoothControllerViewModel,
     modifier: Modifier
 ) {
-    NavHost(navController = navController, startDestination = Screens.FanController.route) {
+    NavHost(navController = navController, startDestination = Screens.SignUp.route) {
         composable(route = Screens.HomeScreen.route) {
             HomeScreen(navController).View(modifier)
         }
@@ -29,16 +27,16 @@ fun Navigate(
             DeviceListScreen(navController).View(modifier)
         }
         composable(route = Screens.BlueToothList.route) {
-            BluetoothList(navController, bluetoothViewModel).View(modifier)
+            BluetoothList(navController).View(modifier)
         }
         composable(route = Screens.DeviceProvision.route) {
-            DeviceProvisionScreen(navController, bluetoothViewModel).View(modifier)
+            DeviceProvisionScreen(navController).View(modifier)
         }
         composable(route = Screens.SignIn.route){
-            SignInScreen().View()
+            SignInScreen(navController).View()
         }
-        composable(route = Screens.LogIn.route){
-            SignUp().View()
+        composable(route = Screens.SignUp.route){
+            SignUp(navController).View()
         }
         composable(route= Screens.BulbController.route){
             BulbController().View()
@@ -46,6 +44,8 @@ fun Navigate(
         composable(route = Screens.FanController.route){
             FanController().View()
         }
+
+
     }
 }
 //+ "/{room}/{mac}"
@@ -57,7 +57,7 @@ sealed class Screens(val route: String) {
     object DeviceProvision : Screens("Device_Provision")
 
     object SignIn : Screens("Sign_in")
-    object LogIn : Screens("Log_in")
+    object SignUp : Screens("Sign_in")
 
     object BulbController : Screens("bulb_controller")
     object FanController : Screens("Fan_Controller")

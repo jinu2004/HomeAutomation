@@ -1,5 +1,6 @@
 package com.jinu.homeautomation.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,19 +17,20 @@ import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -41,10 +43,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.jinu.homeautomation.R
+import com.jinu.homeautomation.ktorclient.auth.domain.AuthResult
+import com.jinu.homeautomation.ktorclient.auth.domain.AuthViewModel
+import com.jinu.homeautomation.ui.navigation.Screens
+import org.koin.androidx.compose.getViewModel
 
-class SignInScreen {
-    @OptIn(ExperimentalMaterial3Api::class)
+class SignInScreen(private val navController: NavController) {
     @Composable
     fun View() {
         var email by remember {
@@ -57,6 +63,40 @@ class SignInScreen {
         var passwordIsVisible by remember {
             mutableStateOf(true)
         }
+
+        val auth = getViewModel<AuthViewModel>()
+        val context = LocalContext.current
+
+
+        LaunchedEffect(auth, context) {
+            auth.authResult.collect { result ->
+                when (result) {
+                    is AuthResult.Authorized -> {
+                        navController.navigate(Screens.HomeScreen.route)
+                    }
+
+                    is AuthResult.Unauthorized -> {
+                        Toast.makeText(context, "You,re not authorized", Toast.LENGTH_SHORT).show()
+                        navController.navigate(Screens.SignIn.route)
+                    }
+
+                    is AuthResult.UnknownError -> {
+                        Toast.makeText(
+                            context,
+                            "An unknown error occurred",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        navController.navigate(Screens.SignIn.route)
+                    }
+                }
+
+            }
+
+        }
+
+
+
+
 
         Column(
             modifier = Modifier.fillMaxSize(),

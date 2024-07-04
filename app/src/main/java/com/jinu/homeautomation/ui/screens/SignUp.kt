@@ -1,7 +1,9 @@
 package com.jinu.homeautomation.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -10,24 +12,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -40,12 +43,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.jinu.homeautomation.R
+import com.jinu.homeautomation.ktorclient.auth.domain.AuthResult
+import com.jinu.homeautomation.ktorclient.auth.domain.AuthUiEvent
+import com.jinu.homeautomation.ktorclient.auth.domain.AuthViewModel
+import com.jinu.homeautomation.ui.navigation.Screens
+import org.koin.androidx.compose.getViewModel
 
-class SignUp {
-    @OptIn(ExperimentalMaterial3Api::class)
+class SignUp(private val navController: NavController) {
     @Composable
-    fun View() {
+    fun View(modifier: Modifier = Modifier) {
         var email by remember {
             mutableStateOf("")
         }
@@ -63,11 +71,41 @@ class SignUp {
         var confirmPasswordIsVisible by remember {
             mutableStateOf(true)
         }
+        val auth = getViewModel<AuthViewModel>()
+        val context = LocalContext.current
+
+
+        LaunchedEffect(auth, context) {
+            auth.authResult.collect { result ->
+                when (result) {
+                    is AuthResult.Authorized -> {
+                        navController.navigate(Screens.HomeScreen.route)
+                    }
+
+                    is AuthResult.Unauthorized -> {
+                        Toast.makeText(context, "You,re not authorized", Toast.LENGTH_SHORT).show()
+                    }
+
+                    is AuthResult.UnknownError -> {
+                        Toast.makeText(
+                            context,
+                            "An unknown error occurred",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+
+            }
+
+        }
+
+
+        val state = auth.state
 
 
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.Top),
+            modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.Top),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
@@ -94,14 +132,14 @@ class SignUp {
 
             item {
                 OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
+                    value = state.username,
+                    onValueChange = { auth.onEvent(AuthUiEvent.SignUpUsernameChanged(it)) },
                     shape = RoundedCornerShape(50),
                     modifier = Modifier
                         .fillMaxWidth(0.8f),
-                    placeholder = { Text(text = "Email") },
-                    label = { Text(text = "Email") },
-                    leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = "") },
+                    placeholder = { Text(text = "Username") },
+                    label = { Text(text = "Username") },
+                    leadingIcon = { Icon(Icons.Outlined.AccountCircle, contentDescription = "") },
                     keyboardActions = KeyboardActions(onNext = {}),
                     keyboardOptions = KeyboardOptions(
                         KeyboardCapitalization.None,
@@ -112,8 +150,14 @@ class SignUp {
 
             item {
                 OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
+                    value = state.password,
+                    onValueChange = {
+                        password = it; auth.onEvent(
+                        AuthUiEvent.SignUpPasswordChanged(
+                            it
+                        )
+                    )
+                    },
                     shape = RoundedCornerShape(50),
                     modifier = Modifier
                         .fillMaxWidth(0.8f),
@@ -151,11 +195,18 @@ class SignUp {
                             else Icon(Icons.Outlined.Visibility, "")
                         }
                     }
+
                 )
             }
 
             item {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = {
+                    if (confirmPassword == password) {
+                        auth.onEvent(AuthUiEvent.SignUp)
+                    } else {
+                        Toast.makeText(context, "password must be same", Toast.LENGTH_SHORT).show()
+                    }
+                }) {
                     Text(text = "Sign Up", modifier = Modifier.padding(start = 10.dp, end = 10.dp))
                 }
             }
