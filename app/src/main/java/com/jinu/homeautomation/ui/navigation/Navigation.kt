@@ -19,7 +19,7 @@ fun Navigate(
     navController: NavHostController,
     modifier: Modifier
 ) {
-    NavHost(navController = navController, startDestination = Screens.SignUp.route) {
+    NavHost(navController = navController, startDestination = Screens.HomeScreen.route) {
         composable(route = Screens.HomeScreen.route) {
             HomeScreen(navController).View(modifier)
         }
@@ -57,7 +57,7 @@ sealed class Screens(val route: String) {
     object DeviceProvision : Screens("Device_Provision")
 
     object SignIn : Screens("Sign_in")
-    object SignUp : Screens("Sign_in")
+    object SignUp : Screens("Sign_up")
 
     object BulbController : Screens("bulb_controller")
     object FanController : Screens("Fan_Controller")

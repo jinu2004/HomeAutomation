@@ -2,10 +2,29 @@ package com.jinu.homeautomation.ui.components
 
 import android.content.res.Resources
 import android.view.MotionEvent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.PowerSettingsNew
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -13,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -25,8 +45,18 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.RequestDisallowInterceptTouchEvent
 import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.jinu.homeautomation.R
 import io.github.ningyuv.circularseekbar.fillMinDimension
 import kotlin.math.PI
 import kotlin.math.atan
@@ -231,5 +261,87 @@ fun CircularSeekbarView(
         }
         dragCenter = dotCenter
         arcCenter = center
+    }
+}
+
+
+@Composable
+fun DeviceOverView() {
+    ElevatedCard(
+        onClick = { /*TODO*/ },
+        shape = RoundedCornerShape(20),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Row(Modifier.fillMaxSize()) {
+
+                OutlinedCard(
+                    modifier = Modifier
+                        .width(70.dp)
+                        .height(70.dp)
+                        .padding(15.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.Transparent,
+                        contentColor = Color.Transparent
+                    ),
+                    shape = RoundedCornerShape(100),
+                    border = BorderStroke(width = 0.dp, color = Color.Transparent)
+
+
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.fan),
+                        contentDescription = "",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+
+                Text(
+                    text = "Fan", modifier = Modifier
+                        .padding(5.dp)
+                        .fillMaxWidth()
+                        .align(Alignment.CenterVertically),
+                    fontSize = TextUnit(
+                        18f,
+                        TextUnitType.Sp
+                    ),
+                    fontWeight = FontWeight(1000),
+                    fontFamily = FontFamily(
+                        Font(
+                            resId = R.font.roboto_medium,
+                            FontWeight.Medium,
+                            style = FontStyle.Normal
+                        )
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+
+            Row(
+                Modifier
+                    .fillMaxSize()
+                    .padding(10.dp)) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .align(Alignment.CenterVertically),
+                    onClick = { },
+                    shape = RoundedCornerShape(100),
+                    elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 2.dp)
+                ) {
+                    Icon(Icons.Outlined.PowerSettingsNew, contentDescription = "")
+                }
+            }
+
+
+        }
     }
 }

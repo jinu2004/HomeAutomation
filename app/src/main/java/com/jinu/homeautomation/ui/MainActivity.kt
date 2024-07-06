@@ -14,17 +14,23 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -62,6 +68,8 @@ class MainActivity : ComponentActivity() {
                     Manifest.permission.BLUETOOTH_ADMIN
                 )
             )
+            window.statusBarColor = Color.Transparent.toArgb()
+
 
 
 
@@ -139,9 +147,13 @@ class MainActivity : ComponentActivity() {
                 }
 
 
-
+                val gradient = Brush.linearGradient(
+                    colors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiaryContainer)
+                )
 
                 Scaffold(
+                    modifier = Modifier.background(gradient),
+                    containerColor = Color.Transparent,
                     floatingActionButton = {
 
                         when (navController.currentDestination?.route) {
@@ -174,7 +186,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Navigate(
                         navController = navController,
-                        modifier = Modifier.padding(it.calculateTopPadding())
+                        modifier = Modifier.padding(it.calculateTopPadding()).fillMaxSize()
                     )
                     if (!currentBluetoothAdapter.isEnabled && navController.currentDestination?.route == Screens.BlueToothList.route) {
                         val enableBluetoothIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)

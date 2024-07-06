@@ -54,9 +54,6 @@ import org.koin.androidx.compose.getViewModel
 class SignUp(private val navController: NavController) {
     @Composable
     fun View(modifier: Modifier = Modifier) {
-        var email by remember {
-            mutableStateOf("")
-        }
         var password by remember {
             mutableStateOf("")
         }

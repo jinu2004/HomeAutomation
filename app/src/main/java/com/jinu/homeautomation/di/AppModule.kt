@@ -17,9 +17,10 @@ import org.koin.dsl.module
 val appModule = module {
     single {
         HttpClient(Android) {
-            install(ContentNegotiation) {
+            install(ContentNegotiation){
                 json()
             }
+
         }
     }
     single {

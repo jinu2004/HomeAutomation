@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jinu.homeautomation.R
 import com.jinu.homeautomation.ktorclient.auth.domain.AuthResult
+import com.jinu.homeautomation.ktorclient.auth.domain.AuthUiEvent
 import com.jinu.homeautomation.ktorclient.auth.domain.AuthViewModel
 import com.jinu.homeautomation.ui.navigation.Screens
 import org.koin.androidx.compose.getViewModel
@@ -53,12 +54,6 @@ import org.koin.androidx.compose.getViewModel
 class SignInScreen(private val navController: NavController) {
     @Composable
     fun View() {
-        var email by remember {
-            mutableStateOf("")
-        }
-        var password by remember {
-            mutableStateOf("")
-        }
 
         var passwordIsVisible by remember {
             mutableStateOf(true)
@@ -76,8 +71,12 @@ class SignInScreen(private val navController: NavController) {
                     }
 
                     is AuthResult.Unauthorized -> {
-                        Toast.makeText(context, "You,re not authorized", Toast.LENGTH_SHORT).show()
-                        navController.navigate(Screens.SignIn.route)
+                        Toast.makeText(
+                            context,
+                            "username or password is incorrect",
+                            Toast.LENGTH_SHORT
+                        ).show()
+//                        navController.navigate(Screens.SignIn.route)
                     }
 
                     is AuthResult.UnknownError -> {
@@ -86,7 +85,7 @@ class SignInScreen(private val navController: NavController) {
                             "An unknown error occurred",
                             Toast.LENGTH_LONG
                         ).show()
-                        navController.navigate(Screens.SignIn.route)
+//                        navController.navigate(Screens.SignIn.route)
                     }
                 }
 
@@ -94,7 +93,7 @@ class SignInScreen(private val navController: NavController) {
 
         }
 
-
+        val state = auth.state
 
 
 
@@ -122,26 +121,27 @@ class SignInScreen(private val navController: NavController) {
             )
 
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = state.username,
+                onValueChange = { auth.onEvent(AuthUiEvent.SignInUsernameChanged(it)) },
                 shape = RoundedCornerShape(50),
                 modifier = Modifier
                     .padding(top = 20.dp)
                     .fillMaxWidth(0.8f),
-                placeholder = { Text(text = "Email") },
-                label = { Text(text = "Email") },
+                placeholder = { Text(text = "Username") },
+                label = { Text(text = "Username") },
                 leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = "")},
                 keyboardActions = KeyboardActions(onNext = {}),
                 keyboardOptions = KeyboardOptions(KeyboardCapitalization.None, imeAction = ImeAction.Next)
             )
             OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
+                value = state.password,
+                onValueChange = { auth.onEvent(AuthUiEvent.SignInPasswordChanged(it)) },
                 shape = RoundedCornerShape(50),
                 modifier = Modifier
                     .padding(top = 20.dp)
                     .fillMaxWidth(0.8f),
                 placeholder = { Text(text = "Password") },
+                keyboardActions = KeyboardActions(onDone = { auth.onEvent(AuthUiEvent.SignIn) }),
                 label = { Text(text = "password") },
                 leadingIcon = { Icon(Icons.Outlined.Password, contentDescription = "") },
                 visualTransformation = if (passwordIsVisible) PasswordVisualTransformation() else VisualTransformation.None,
@@ -159,7 +159,14 @@ class SignInScreen(private val navController: NavController) {
                 text = "Forgotten password?",modifier = Modifier.padding(top = 10.dp)
             )
 
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(30.dp)) {
+            Button(
+                onClick = {
+                    if (state.password.isNotEmpty() && state.username.isNotEmpty()) {
+                        auth.onEvent(AuthUiEvent.SignIn)
+                    } else Toast.makeText(context, "Fill all the field", Toast.LENGTH_SHORT).show()
+                },
+                modifier = Modifier.padding(30.dp)
+            ) {
                 Text(text = "Sign in", modifier = Modifier.padding(start = 20.dp, end = 20.dp))
             }
 

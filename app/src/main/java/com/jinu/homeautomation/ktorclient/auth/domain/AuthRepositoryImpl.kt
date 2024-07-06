@@ -37,11 +37,13 @@ class AuthRepositoryImpl(
         }
         catch (e: RedirectResponseException) {
             if (e.response.status.value == 401) {
+                e.printStackTrace()
                 AuthResult.Unauthorized()
             } else {
                 AuthResult.UnknownError()
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             AuthResult.UnknownError()
         }
 
@@ -62,12 +64,16 @@ class AuthRepositoryImpl(
         }
         catch (e: RedirectResponseException) {
             if (e.response.status.value == 401) {
+                e.printStackTrace()
                 AuthResult.Unauthorized()
             } else {
                 AuthResult.UnknownError()
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             AuthResult.UnknownError()
+
+
         }
     }
 
